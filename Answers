@@ -1,0 +1,71 @@
+
+=========================================================
+Uppgift 2: Analysis
+=========================================================
++   Beroende mellan IVehicle och Truck/Car anser vi är rätt/nödvändigt då vi vill slippa
+    mycket duplicering av kod samtidigt som vi abstraherar väl med att ha vehicle som ett interface.
+    Association via IVehicle klassen ger inte heller någon stark koppling.
+    IVehicle anser vi också är nödvändig då vi vill utnyttja polymorfismen som den erbjuder. Detta gör att
+    vi kan hantera olika typer av fordon i en och samma datastruktur i kopplingen till det grafiska gränssnittet.
+    Vi bör dock refaktorisera IVehicle för att skapa högre cohesion emellan det grafiska gränssnittet och modulen.
+
+-   Onödiga beroenden råder emllelan Truck och TruckBed/CarTrailer då dessa ger dubbelt beroende
+    mellan klasserna. Även associationen  mellan Truck/Saab95 och CarController bör tas bort då dessa ger
+    hög coupling för systemet. Dubbelt beroende finns också mellan CarView och CarController, men där behöver stora delar
+    av det grafiska gränssnittet refaktoriseras.
+
+-   I Saab95 och Volvo240 så overridear vi Speed factor som implimenteras i Car, vilket inte är helt i linje med LSP.
+    Vi lägger dessutom inte till särskilt mycket funktionalitet i Volvo240 samt Saab95.
+
+-   Trailer skulle lika gärna kunna vara ett generiskt interface om vi tar bort dubbelberoendet emellan Trailersen och Truck.
+
+-   I vår interface struktur bryter vi mot SRP. Att skapat fler interface med konkretare ansvar är förmodligen en god ide
+    både för code-reuseability samt SRP.
+
+==========================================================
+Uppgift 3
+==========================================================
+Klassen Vehicle har som ansvar att delegera gemensam kod till både Car och Truck.
+Dessa båda har i sin tur ansvaret att skicka med gemensam kod till de olika bilmodellerna.
+
+DrawPanel har som ansvar att rita om tillståndet i grafiken när något fordon har flyttat på sig.
+CarView har som ansvar att skapa en JFrame med alla användbara knappar, men även att lyssna efter
+knapptryckningar. Detta är något vi vill ändra då det bryter mot Single Responsibility Principle.
+CarController ansvarar för att köra själva applikationen men även att instansiera bilarna samt rita
+via DrawPanel. Även detta bryter mot SRP och vi behöver tillämpa dekomposition.
+
+==========================================================
+Uppgift 4
+==========================================================
+I vårt nya uml-diagram "NewDesign.puml" har vi försökt åtgärna de problem och brott mot designprinciper som diskuterats ovan.
+Den nya strukturen har svagare beroenden där det tidigare var för starka, den har lägre coupling mellan det grafiska
+gränssnittet och modellen, samt tydligare ansvarsområden i samtliga fall där vi tidiare bröt mot SRP.
+
+Refaktorisering:
+
+    Förbättra SRP samt öka cohesion genom att addera interface:
+    Införa interfacen IEngine IMotorVehicle samt Loadable enligt UML för att dels abstrahera, men också
+    för att samtliga fordon som skickas över till det grafiska gränssnittet ska stödja samma funktionalitet.
+    Detta kommer att ta bort många beroenden på kontkreta implimentationer av våra subklasser i det grafiska.
+
+    Beroende Truck/TruckBed/CarTrailer:
+    Flytta över funktionalitet från släpen till Truck så att endast [Truck --> CarTrailer/TruckBed] gäller och
+    inte vice versa. Släpen avänder sig bara av lastbilen på något enstaka ställe så detta borde inte vara en
+    komplicerad refaktorisering. Vi kan i samband med detta göra om klassen Trailer till ett interface.
+
+    Införa ett Obersver pattern för lösare kopplingar i det grafiska gränssnittet:
+    Lägga till klassena CarModel samt CarApp. Syftet med detta är att följa SRP, då klassena idag ansvarar för
+    många olika saker. I CarModel vill vi placera implimentationen som idag återfinns i CarController och således göra
+    CarController "tunnare". CarController ska i sin tur enbart ta emot signaler ifrån CarView och meddela CarModel att
+    utföra önskade åtgärder. Införandet av interfacet MoveObserver gör vi för att ta bort associationen som CarModel gör
+    till CarController/CarView för att abstrahera CarModel. CarApp införs för att skapa instansieringen av modellen,
+    med SRP i åtanke.
+
+Parrallell utveckling:
+
+    Graphics och Model enligt UML kan refaktoriseras helt parrallellt så länge specifikationen för IMotorVehicle bestäms.
+    Detta möjliggörs till stor del av abstraktionen att IMotorVehicle är ett interface.
+    Samma gäller för delen där vi vill minska beroendet mellan truck och CarTrailer/TruckBed, då det inte stör
+    refaktoriseringen "högre upp" i programmet.
+
+

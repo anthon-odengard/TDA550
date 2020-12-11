@@ -1,0 +1,113 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+package Model {
+
+    class Car {
+        -parent : MotorVehicle
+    }
+    class Truck {
+        -parent : MotorVehicle
+        -trailer :  Trailer
+    }
+    class MotorVehicle
+
+    class TruckBed{
+        + truck : Truck
+        -setRampPosition() : void
+    }
+    class CarTrailer{
+        + truck:Truck
+        -setRampPosition() : void
+    }
+    interface Trailer<T>
+    class WorkShop<T extends IMotorVehicle> {
+        ArrayList<T>
+       }
+
+     class MotorVehicleFactory
+
+package {
+ interface Loadable{
+    + load() : void
+    + deLoad() : void
+    }
+    interface IMotorVehicle
+    interface IEngine{
+    + setHorsePower() : void
+    + setTrim() : void
+    }
+    interface IVehicle
+    interface Movable
+
+}
+
+}
+
+package Graphics {
+
+    class CarApp
+    class CarController
+    class CarView {
+        -DrawPanel drawPanel
+    }
+    class DrawPanel
+
+    interface MoveObserver
+    interface AddedVehicleObserver
+    interface SpeedObserver
+    class CarModel
+    class VehicleSpeedView
+}
+
+IMotorVehicle --|> IVehicle
+
+IVehicle --|> Movable
+IVehicle --|> Loadable
+IVehicle -[hidden]> Movable
+
+IMotorVehicle <|.. Car
+IMotorVehicle <|.. Truck
+IMotorVehicle <|.. MotorVehicle
+
+IEngine <|.. IMotorVehicle
+
+MotorVehicle <--o Car
+MotorVehicle <--o Truck
+
+Truck --> Trailer
+Trailer <|.. CarTrailer
+Trailer <|.. TruckBed
+
+IMotorVehicle <-- WorkShop
+MotorVehicleFactory ..> Truck
+MotorVehicleFactory ..> Car
+MotorVehicleFactory ..> TruckBed
+MotorVehicleFactory ..> CarTrailer
+
+CarModel --> IMotorVehicle
+CarModel ..> MotorVehicleFactory
+
+CarApp --> CarModel
+CarApp --> CarView
+CarApp --> CarController
+CarApp --> DrawPanel
+CarApp --> VehicleSpeedView
+CarApp ..> MotorVehicleFactory
+
+MoveObserver <-- CarModel
+AddedVehicleObserver <-- CarModel
+SpeedObserver <-- CarModel
+MoveObserver <|.. DrawPanel
+MoveObserver <|.. CarController
+AddedVehicleObserver <|.. DrawPanel
+SpeedObserver <|.. VehicleSpeedView
+AddedVehicleObserver <|.. VehicleSpeedView
+
+CarController --> CarView
+
+DrawPanel --> CarModel
+
+VehicleSpeedView --> CarModel
+
+@enduml

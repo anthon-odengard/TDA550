@@ -1,0 +1,95 @@
+@startuml
+skinparam classAttributeIconSize 0
+package Model {
+interface IVehicle
+interface Movable
+class Car {
+    -parent : Vehicle
+}
+class Truck {
+    -parent : Vehicle
+    -trailer :  Trailer
+}
+class Vehicle
+class Volvo240
+class Saab95
+class Scania
+class MAN
+class TruckBed{
+    + truck : Truck
+ -setRampPosition() : void
+}
+
+class CarTrailer{
+ + truck:Truck
+ -setRampPosition() : void
+
+}
+abstract class Trailer<T>
+class WorkShop<T extends Car> {
+    ArrayList<T>
+    }
+
+}
+package Graphics {
+class CarController {
+
+    +vehicles : ArrayList<IVehicle>
+    +turboVehicles : ArrayList<Saab95>
+    +Trucks : ArrayList<Truck>
+    -gas() : void
+    -brake() : void
+    -turboOn() : void
+    -turboOff() : void
+    -liftRamp() : void
+    -lowerRamp() : void
+    -start() : void
+    -stop() : void
+
+
+
+}
+class CarView {
+    -DrawPanel drawPanel
+    +CarC : CarController
+}
+class DrawPanel
+class JFrame
+class JPanel
+}
+IVehicle <|.. Car
+IVehicle <|.. Truck
+IVehicle <|.. Vehicle
+
+IVehicle --|> Movable
+IVehicle -[hidden]> Movable
+
+Vehicle <--o Car
+Vehicle <--o Truck
+
+Car <|-- Volvo240
+Car <|-- Saab95
+
+Truck <|-- Scania
+Truck <|-- MAN
+
+Trailer <|-- CarTrailer
+Trailer <|-- TruckBed
+
+Truck <--> CarTrailer
+Truck <--> TruckBed
+
+Car <-- WorkShop
+
+CarController <-- IVehicle
+CarController <-- Truck
+CarController <-- Saab95
+CarController <--> CarView
+
+CarView <-- DrawPanel
+
+JFrame <|.. CarView
+
+JPanel <|.. DrawPanel
+@enduml
+
